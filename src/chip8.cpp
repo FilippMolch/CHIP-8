@@ -1,11 +1,11 @@
 #include <chip8.h>
 
 #define OPCODE_FIND opcode_trig = true;
-#define VX this->get_args(opcode, 8, 0x0F00)
-#define VY this->get_args(opcode, 4, 0x00F0)
-#define K this->get_args(opcode, 0, 0x000F)
-#define KK this->get_args(opcode, 0, 0x00FF)
-#define NNN this->get_args(opcode, 0, 0x0FFF)
+#define VX get_args(opcode, 8, 0x0F00)
+#define VY get_args(opcode, 4, 0x00F0)
+#define K get_args(opcode, 0, 0x000F)
+#define KK get_args(opcode, 0, 0x00FF)
+#define NNN get_args(opcode, 0, 0x0FFF)
 
 void CPU_log_class::log_CPU(chip8& _cpu, bool reg_out, int _delay, bool _trace) {
 	using namespace std;
@@ -441,12 +441,11 @@ bool chip8::cpu_cycle() {
 			}
 		}
 		if (reg[0] <= 63 && reg[1] <= 31) {
-			this->write_sprite(reg[0], reg[1], sprite, 5);
+			write_sprite(reg[0], reg[1], sprite, 5);
 		}
 		else{
-			this->write_sprite(63, 31, sprite, 5);
+			write_sprite(63, 31, sprite, 5);
 		}
-
 
 		draw_flag = true;
 		break;
@@ -467,31 +466,40 @@ bool chip8::cpu_cycle() {
 
 }
 
-
 void chip8::hex_to_bin(int* array_, uint8_t byte) {
-	int bb = 7;
-	int po = 0;
+	int exp = 7;
+	int mask = 0;
 	int i = 0;
 
-	while (bb > -1) {
-		po = pow(2, bb);
-		bb--;
-		array_[i] = ((byte & po) ? 1 : 0);
+	while (exp > -1) {
+		mask = pow(2, exp);
+		exp--;
+		array_[i] = ((byte & mask) ? 1 : 0);
 		i++;
 	}
-	bb = 7;
-	po = 0;
-
 }
 
 void chip8::write_sprite(uint8_t x, uint8_t y, uint8_t* sprite, uint8_t sprite_size) {
 	
 	int str[8];
-	
+	int disp_ptr = 0;
+
 	for (int i = 0; i < sprite_size; i++) {
-		this->hex_to_bin(str, sprite[i]);
+		hex_to_bin(str, sprite[i]);
 		for (int k = 0; k < 8; k++){
-			display[(x + ((y+i) * 64)) + k] ^= str[k];
+			disp_ptr = (x + ((y + i) * 64)) + k;
+
+			if (display[disp_ptr]) {
+				Vx[0xf] = 1;
+			}
+			else {
+				Vx[0xf] = 0;
+			}
+			
+			display[disp_ptr] ^= str[k];
+			
+			
+			
 		}
 	}
 	

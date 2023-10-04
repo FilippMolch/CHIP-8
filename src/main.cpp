@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
 
 	chip8 cpu;
 	if (!cpu.init()) std::cerr << "INIT fail";
-	cpu.load_rom("C:\\Users\\Filipp\\source\\repos\\CHIP-8 EMU\\ConsoleApplication2\\ROMs\\pong.ch8");
+	cpu.load_rom("C:\\Users\\Filipp\\source\\repos\\CHIP-8 EMU\\ConsoleApplication2\\ROMs\\octojam1title.ch8");
 
 	uint32_t p[64*32];
 
