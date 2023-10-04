@@ -36,7 +36,7 @@ private:
 public:
 	void hex_to_bin(int* array_, uint8_t byte);
 	void set_keypad(int keys, int value);
-	void write_sprite(uint8_t x, uint8_t y, uint8_t* disp_buf, uint8_t* sprite, uint8_t sprite_size);
+	void write_sprite(uint8_t x, uint8_t y, uint8_t* sprite, uint8_t sprite_size);
 	uint8_t display[64*32];
 	bool draw_flag;
 

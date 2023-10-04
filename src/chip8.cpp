@@ -93,7 +93,6 @@ bool chip8::load_rom(const char* path){
 	
 	try{
 		
-		
 		int it = 0;
 		std::ifstream rom(path, std::ios::binary | std::ios::in);
 		
@@ -105,9 +104,8 @@ bool chip8::load_rom(const char* path){
 			else {
 				while (!rom.eof()){
 					rom.get(ch);
-					//printf("%X", ch);
+					
 					memory[512 + it] = (uint8_t) ch;
-					//rom.read(ch, 204);
 					it++;
 				}
 			}
@@ -129,7 +127,7 @@ bool chip8::load_rom(const char* path){
 
 bool chip8::cpu_cycle() {
 	opcode = (memory[PC] << 8) | (memory[PC + 1]);
-	opcode_1F = this->get_args(opcode, 12, 0xFFFF);
+	opcode_1F = get_args(opcode, 12, 0xFFFF);
 
 	cycles++;
 
@@ -143,7 +141,7 @@ bool chip8::cpu_cycle() {
 	}
 
 	if (opcode_1F == 0){
-		uint8_t opcode_0 = this->get_args(opcode, 0, 0x00FF);
+		uint8_t opcode_0 = get_args(opcode, 0, 0x00FF);
 
 		switch (opcode_0)
 		{
@@ -164,7 +162,7 @@ bool chip8::cpu_cycle() {
 
 
 	if (opcode_1F == 8){
-		uint8_t opcode_8 = this->get_args(opcode, 0, 0x000F);
+		uint8_t opcode_8 = get_args(opcode, 0, 0x000F);
 		switch (opcode_8) {
 		case 0:
 			//8xy0 LD
@@ -235,7 +233,7 @@ bool chip8::cpu_cycle() {
 	}
 	
 	if (opcode_1F == 0xE) {
-		uint8_t opcode_E = this->get_args(opcode, 0, 0x000F);
+		uint8_t opcode_E = get_args(opcode, 0, 0x000F);
 
 		switch (opcode_E){
 		case 0xE:
@@ -257,7 +255,7 @@ bool chip8::cpu_cycle() {
 	}
 
 	if (opcode_1F == 0xF) {
-		uint8_t opcode_F = this->get_args(opcode, 0, 0x00FF);
+		uint8_t opcode_F = get_args(opcode, 0, 0x00FF);
 		
 		switch (opcode_F) {
 		case 0x07:
@@ -443,11 +441,12 @@ bool chip8::cpu_cycle() {
 			}
 		}
 		if (reg[0] <= 63 && reg[1] <= 31) {
-			this->write_sprite(reg[0], reg[1], this->display, sprite, 5);
+			this->write_sprite(reg[0], reg[1], sprite, 5);
 		}
 		else{
-			this->write_sprite(63, 31, this->display, sprite, 5);
+			this->write_sprite(63, 31, sprite, 5);
 		}
+
 
 		draw_flag = true;
 		break;
@@ -485,14 +484,14 @@ void chip8::hex_to_bin(int* array_, uint8_t byte) {
 
 }
 
-void chip8::write_sprite(uint8_t x, uint8_t y, uint8_t* disp_buf, uint8_t* sprite, uint8_t sprite_size) {
+void chip8::write_sprite(uint8_t x, uint8_t y, uint8_t* sprite, uint8_t sprite_size) {
 	
 	int str[8];
 	
 	for (int i = 0; i < sprite_size; i++) {
 		this->hex_to_bin(str, sprite[i]);
 		for (int k = 0; k < 8; k++){
-			this->display[(x + ((y+i) * 64)) + k] ^= str[k];
+			display[(x + ((y+i) * 64)) + k] ^= str[k];
 		}
 	}
 	
